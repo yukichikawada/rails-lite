@@ -1,5 +1,6 @@
 require 'active_support'
 require 'active_support/core_ext'
+require 'active_support/inflector'
 require 'erb'
 require_relative './session'
 
@@ -22,7 +23,7 @@ class ControllerBase
 
     @res.header['location'] = url
     @res.status = 302
-    
+
     @already_built_response = true
   end
 
@@ -41,6 +42,11 @@ class ControllerBase
   # use ERB and binding to evaluate templates
   # pass the rendered html to render_content
   def render(template_name)
+
+    template = File.read(template_name)
+    erb_template = ERB.new(template).result(binding)
+
+    render_content(erb_template, 'text/html')
   end
 
   # method exposing a `Session` object
